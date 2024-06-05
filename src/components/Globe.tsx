@@ -27,29 +27,34 @@ export const Globe = () => {
 
     const verteciesAllCountries: any = [];
 
-    countries.features[0].geometry.coordinates[0];
-
-    countries.features.forEach((feature: any) => {
-        const vert: any = [];
-        feature.geometry.coordinates[0].forEach((e: any) => {
-            vert.push(convertCartesian(e));
-        });
-        verteciesAllCountries.push(vert);
+    countries.features.forEach((country: any) => {
+        if(country.geometry.type === 'Polygon') {    
+            const vert: any = [];      
+            country.geometry.coordinates[0].forEach((coordinate: any) => {
+                vert.push(convertCartesian(coordinate));                
+            });
+            verteciesAllCountries.push(vert);
+        } else if(country.geometry.type === "MultiPolygon") {
+            country.geometry.coordinates.forEach((coordinates: any) => {   
+                coordinates.forEach((element: any) => {
+                    const vert2: any = [];
+                    element.forEach((e: any) => {
+                        vert2.push(convertCartesian(e));
+                    });
+                    verteciesAllCountries.push(vert2);
+                    // need to clear vert array otherwise there are still all entrys in it
+                });
+            });
+        }
     });
-
-    console.log({ verteciesAllCountries });
-
-    const geometry = new THREE.BufferGeometry().setFromPoints(
-        verteciesAllCountries[0],
-    );
-    geometry.computeVertexNormals();
 
     const material = new THREE.MeshBasicMaterial({
         color: 0xff0000,
         opacity: 0.7,
     });
 
-    console.log(verteciesAllCountries[26]);
+    const geometry = new THREE.BufferGeometry().setFromPoints(verteciesAllCountries[0]);
+    const testMat = new THREE.PointsMaterial({ color: 'blue', size: 0.05 });
 
     return (
         <Canvas
@@ -66,7 +71,7 @@ export const Globe = () => {
             }}
         >
             <mesh>
-                <hemisphereLight intensity={30} groundColor="black" />
+                <hemisphereLight intensity={30} groundColor="white" />
                 <spotLight
                     position={[-20, 50, 10]}
                     angle={0.12}
@@ -96,14 +101,10 @@ export const Globe = () => {
                 >
                     <sphereGeometry args={[4, 64, 64]} />
                     <meshStandardMaterial map={earthTexture} transparent />
-                    <mesh
-                        geometry={geometry}
-                        material={material}
-                        position={[0, 0, 0]}
-                        onClick={() => {
-                            console.log('yessss');
-                        }}
-                    />
+                    <mesh>
+                        <points geometry={geometry} material={testMat} />
+                    </mesh>
+                   
                     {verteciesAllCountries.map(
                         (countryVert: number[], index: number) => (
                             <Line

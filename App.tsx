@@ -1,18 +1,17 @@
-import { Suspense } from 'react';
-import { Platform, SafeAreaView, StyleSheet, Text, Image } from 'react-native';
+import React, { Suspense } from 'react';
+import { Platform, SafeAreaView, StyleSheet, Text } from 'react-native';
 import { Globe } from './src/components/Globe';
-import { Test } from './src/components/Test';
-import React from 'react';
+import { Test } from './src/components/Test'
 
 export default function App() {
   return (
-    <SafeAreaView>
-            <Text>{Platform.OS}</Text>
-            <Suspense fallback={<Text>... loading</Text>}>
-              <Globe />
-            </Suspense>
-            <Text>{Platform.OS}</Text>
-        </SafeAreaView>
+    <SafeAreaView style={{flex: 1}}>
+      <Text>{Platform.OS}</Text>
+      <Suspense >
+        <Globe />
+      </Suspense>
+      <Text>{Platform.OS}</Text>
+    </SafeAreaView>
       
   );
 }
