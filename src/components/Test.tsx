@@ -1,25 +1,16 @@
-import { Canvas } from '@react-three/fiber';
+import { Canvas } from '@react-three/fiber/native';
 import React from 'react';
 
 export const Test = () => {
     return (
-        <Canvas>
-     <mesh>
-                <hemisphereLight intensity={30} groundColor="black" />
-                <spotLight
-                    position={[-20, 50, 10]}
-                    angle={0.12}
-                    penumbra={1}
-                    intensity={1}
-                    castShadow
-                    shadow-mapSize={1024}
-                />
-                <pointLight intensity={1} />
-            </mesh>
-    <mesh>
-      <sphereGeometry />
-      <meshStandardMaterial color="hotpink" />
-    </mesh>
-  </Canvas>
+      <Canvas>
+        <ambientLight intensity={Math.PI / 2} />
+        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
+        <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
+        <mesh >
+          <sphereGeometry args={[1, 16, 16]} />
+          <meshStandardMaterial color="hotpink" transparent />
+        </mesh>
+    </Canvas>
     );
 };
