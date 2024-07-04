@@ -12,7 +12,7 @@ function geoPolygonTriangulate(
     resolution = Infinity, // curvature resolution, in spherical degrees
   } = {}
 ) {
-  const contour = interpolateContourPoints(polygon, resolution);
+  const contour = interpolateContourPoints(polygon, 100);
 
   const edgePoints = flatten(contour);
   const innerPoints = getInnerGeoPoints(polygon, resolution);

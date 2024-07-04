@@ -56,7 +56,7 @@ export const GenerateCountryPolygon = (
 
   function generateVertices(polygon) {
     const coords3d = polygon.map((coords) =>
-      coords.map((point) => convertCartesian(point))
+      coords.map((point) => convertCartesian(point, radius))
     );
     // returns { vertices, holes, coordinates }. Each point generates 3 vertice items (x,y,z).
     return earcut.flatten(coords3d);
@@ -80,16 +80,26 @@ export const GenerateCountryPolygon = (
     ];
   }
 
-  function convertCartesian(point) {
-    const lambda = (point[0] * Math.PI) / 180;
-    const phi = (point[1] * Math.PI) / 180;
-    const cosPhi = Math.cos(phi);
-    return [
-      radius * cosPhi * Math.cos(lambda),
-      radius * Math.sin(phi),
-      -radius * cosPhi * Math.sin(lambda)
-    ];
-  }; 
+  return { bufferGeometry, contour, triangles };
+};
 
-  return {bufferGeometry, contour, triangles};
+export const convertCartesian = (point, radius) => {
+  const lambda = (point[0] * Math.PI) / 180;
+  const phi = (point[1] * Math.PI) / 180;
+  const cosPhi = Math.cos(phi);
+  return [
+    radius * cosPhi * Math.cos(lambda),
+    radius * Math.sin(phi),
+    -radius * cosPhi * Math.sin(lambda),
+  ];
+};
+
+export const convertCartesianPointArray = (points, radius) => {  
+  const polarPoints = points.map((polygon) =>
+    polygon.map((point) => {
+      return convertCartesian(point, radius);
+    })
+  );
+  
+  return polarPoints;
 };
