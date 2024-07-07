@@ -161,15 +161,6 @@ export const Globe = ({ navigation }) => {
 
   return (
     <View
-      style={{ flex: 1, justifyContent: "center", alignItems: "center", borderColor: "red", borderWidth: 1}}
-      {...event}>
-      <Text>{Platform.OS}</Text>
-      <Button title="Go to List" onPress={() => navigation.navigate("List")} />
-    </View>
-  );
-
-  return (
-    <View
       style={{
         flex: 1,
         justifyContent: "center",
@@ -179,129 +170,123 @@ export const Globe = ({ navigation }) => {
       }}
       {...event}>
       <Text>{Platform.OS}</Text>
-      <Suspense fallback={null}>
-        <Canvas
-          shadows
-          frameloop="demand"
-          gl={{ preserveDrawingBuffer: true }}
-          camera={{
-            fov: 50,
-            near: 0.1,
-            far: 400,
-            position: [-15, 1, 1],
-          }}>
-          <Suspense fallback={null}>
-            <OrbitControls
-              enablePan={false}
-              maxZoom={15}
-              minZoom={4}
-              zoomSpeed={1.2}
-              rotateSpeed={1.5}
+      <Canvas
+        shadows
+        frameloop="demand"
+        gl={{ preserveDrawingBuffer: true }}
+        camera={{
+          fov: 50,
+          near: 0.1,
+          far: 400,
+          position: [-15, 1, 1],
+        }}>
+        <Suspense fallback={null}>
+          <OrbitControls
+            enablePan={false}
+            maxZoom={15}
+            minZoom={4}
+            zoomSpeed={1.2}
+            rotateSpeed={1.5}
+          />
+          <mesh name="lighting">
+            {/* <hemisphereLight intensity={10} /> */}
+            <directionalLight
+              color={"#ffffff"}
+              intensity={10}
+              position={[-2, -0.5, 1]}
             />
-            <mesh name="lighting">
-              {/* <hemisphereLight intensity={10} /> */}
-              <directionalLight
-                color={"#ffffff"}
-                intensity={10}
-                position={[-2, -0.5, 1]}
-              />
-            </mesh>
+          </mesh>
 
-            <mesh
-              name="atmosphere"
-              visible
-              position={[0, 0, 0]}
-              rotation={[0, 0, 0]}>
-              <sphereGeometry args={[4.2, 64, 64]} />
-              <meshStandardMaterial
-                color={"#349eeb"}
-                opacity={0.3}
-                transparent
-              />
-            </mesh>
+          <mesh
+            name="atmosphere"
+            visible
+            position={[0, 0, 0]}
+            rotation={[0, 0, 0]}>
+            <sphereGeometry args={[4.2, 64, 64]} />
+            <meshStandardMaterial color={"#349eeb"} opacity={0.3} transparent />
+          </mesh>
 
-            {/* <mesh name="clouds" visible position={[0, 0, 0]} rotation={[0, 0, 0]}>
+          {/* <mesh name="clouds" visible position={[0, 0, 0]} rotation={[0, 0, 0]}>
             <sphereGeometry args={[4.5, 64, 64]} />
             <meshStandardMaterial map={cloudTexture} opacity={1} transparent />
           </mesh> */}
 
+          <mesh
+            name="earth-day"
+            visible
+            position={[0, 0, 0]}
+            rotation={[0, 0, 0]}>
+            <sphereGeometry args={[4, 64, 64]} />
+            <meshStandardMaterial map={earthTexture} opacity={1} />
+          </mesh>
+          <mesh name="earth-night">
+            <sphereGeometry args={[4, 64, 64]} />
+            <meshBasicMaterial
+              map={earthNightTexture}
+              color={"#ffffff"}
+              blending={AdditiveBlending}
+            />
+          </mesh>
+
+          {polygonCountries.map((country, countryIndex) => (
             <mesh
-              name="earth-day"
-              visible
-              position={[0, 0, 0]}
-              rotation={[0, 0, 0]}>
-              <sphereGeometry args={[4, 64, 64]} />
-              <meshStandardMaterial map={earthTexture} opacity={1} />
+              name="country"
+              onClick={() => handleCountryClick(countryIndex)}>
+              {country.map((polygon) => {
+                // Fix reloading of all the compinents when clicking a country
+                // console.log("contour", polygon.contour);
+
+                return (
+                  <>
+                    <mesh
+                      name="country-polygon"
+                      geometry={polygon.bufferGeometry}>
+                      <meshBasicMaterial
+                        color={
+                          countryData.get(
+                            countriesJson.features[countryIndex].properties
+                              .adm0_a3
+                          ).visited
+                            ? colorContinentMap.get(
+                                countriesJson.features[countryIndex].properties
+                                  .continent
+                              )
+                            : "gray"
+                        }
+                        opacity={0.4}
+                      />
+                    </mesh>
+                    <mesh name="country-border">
+                      <Line
+                        points={
+                          convertCartesianPointArray(
+                            polygon.contour,
+                            globeRadius + 0.02
+                          )[0]
+                        }
+                        color={
+                          countryData.get(
+                            countriesJson.features[countryIndex].properties
+                              .adm0_a3
+                          ).visited
+                            ? colorBorderContinentMap.get(
+                                countriesJson.features[countryIndex].properties
+                                  .continent
+                              )
+                            : "#6d6d6d"
+                        }
+                        lineWidth={1}
+                      />
+                    </mesh>
+                  </>
+                );
+              })}
             </mesh>
-            <mesh name="earth-night">
-              <sphereGeometry args={[4, 64, 64]} />
-              <meshBasicMaterial
-                map={earthNightTexture}
-                color={"#ffffff"}
-                blending={AdditiveBlending}
-              />
-            </mesh>
+          ))}
 
-            {polygonCountries.map((country, countryIndex) => (
-              <mesh
-                name="country"
-                onClick={() => handleCountryClick(countryIndex)}>
-                {country.map((polygon) => {
-                  // Fix reloading of all the compinents when clicking a country
-                  // console.log("contour", polygon.contour);
-
-                  return (
-                    <>
-                      <mesh
-                        name="country-polygon"
-                        geometry={polygon.bufferGeometry}>
-                        <meshBasicMaterial
-                          color={
-                            countryData.get(
-                              countriesJson.features[countryIndex].properties
-                                .adm0_a3
-                            ).visited
-                              ? colorContinentMap.get(
-                                  countriesJson.features[countryIndex]
-                                    .properties.continent
-                                )
-                              : "gray"
-                          }
-                          opacity={0.4}
-                        />
-                      </mesh>
-                      <mesh name="country-border">
-                        <Line
-                          points={
-                            convertCartesianPointArray(
-                              polygon.contour,
-                              globeRadius + 0.02
-                            )[0]
-                          }
-                          color={
-                            countryData.get(
-                              countriesJson.features[countryIndex].properties
-                                .adm0_a3
-                            ).visited
-                              ? colorBorderContinentMap.get(
-                                  countriesJson.features[countryIndex]
-                                    .properties.continent
-                                )
-                              : "#6d6d6d"
-                          }
-                          lineWidth={1}
-                        />
-                      </mesh>
-                    </>
-                  );
-                })}
-              </mesh>
-            ))}
-
-            <Preload all />
-          </Suspense>
-        </Canvas>
-      </Suspense>
+          <Preload all />
+        </Suspense>
+      </Canvas>
       <Button title="Go to List" onPress={() => navigation.navigate("List")} />
     </View>
   );

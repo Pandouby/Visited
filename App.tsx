@@ -16,9 +16,13 @@ import { FeatureCollection } from "geojson";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Globe } from "./src/components/Globe";
 import { CountryList } from "./src/components/CountryList";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, TabRouter } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Tabbar } from "./src/components/Tabbar";
+import { FaGlobeEurope } from "react-icons/fa";
+import { Ionicons } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 
 export default function App() {
   const countriesJson = countriesJsonData as FeatureCollection;
@@ -38,6 +42,8 @@ export default function App() {
         console.log("adm", country.properties.adm0_a3);
 
         countryDataMap.set(country.properties.adm0_a3, {
+          countryName: country.properties.admin,
+          iso_a2: country.properties.iso_a2,
           visited: false,
         });
       });
@@ -83,6 +89,7 @@ export default function App() {
   }, [countryData]);
 
   const Stack = createNativeStackNavigator();
+  const Tab = createBottomTabNavigator();
 
   return (
     <NavigationContainer>
@@ -93,20 +100,40 @@ export default function App() {
             backgroundColor: "white",
             paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
           }}>
-          <Stack.Navigator>
-            <Stack.Screen
-              name="Globe"
-              component={CountryList}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="List"
-              component={CountryList}
-              options={{ headerShown: false }}
-            />
-          </Stack.Navigator>
-
-          <Tabbar></Tabbar>
+            <Tab.Navigator
+              initialRouteName="Globe"
+              screenOptions={{ tabBarShowLabel: false }}>
+              <Tab.Screen
+                name="Globe"
+                component={Globe}
+                options={{
+                  headerShown: false,
+                  tabBarIcon: ({ color }) => (
+                    <Entypo name="globe" size={24} color={color} />
+                  ),
+                }}
+              />
+              <Tab.Screen
+                name="List"
+                component={CountryList}
+                options={{
+                  headerShown: false,
+                  tabBarIcon: ({ color }) => (
+                    <Entypo name="list" size={24} color={color} />
+                  ),
+                }}
+              />
+              <Tab.Screen
+                name="Settings"
+                component={CountryList}
+                options={{
+                  headerShown: false,
+                  tabBarIcon: ({ color }) => (
+                    <Ionicons name="settings-outline" size={24} color={color} />
+                  ),
+                }}
+              />
+            </Tab.Navigator>
         </SafeAreaView>
       </CountryDataContext.Provider>
     </NavigationContainer>
