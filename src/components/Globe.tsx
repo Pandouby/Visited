@@ -1,30 +1,28 @@
 import { Line, Preload } from "@react-three/drei/native";
 import { Canvas, useLoader } from "@react-three/fiber/native";
+import useControls from "r3f-native-orbitcontrols";
 import React, {
   Suspense,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from "react";
+import { Button, Platform, Text, View, StyleSheet } from "react-native";
 import { AdditiveBlending, Texture, TextureLoader } from "three";
 import {
   GenerateCountryPolygon,
   convertCartesianPointArray,
 } from "../calculations/GenerateCountryPolygon";
-import countriesJsonData from "../data/low-low-res.geo.json";
-import RNFS from "react-native-fs";
-import { FeatureCollection } from "../interfaces/geoJson";
-import { Platform, View, Text, Button } from "react-native";
-import useControls from "r3f-native-orbitcontrols";
 import { CountryDataContext } from "../contexts/countryDataContext";
-import { CountryList } from "./CountryList";
+import countriesJsonData from "../data/low-low-res.geo.json";
+import { ICountryData } from "../interfaces/countryData";
+import { FeatureCollection } from "../interfaces/geoJson";
 
 export const Globe = ({ navigation }) => {
   // Constants for globe calculation
   const globeRadius = 4;
-  const polygonResolution = 4; // In angular degrees
+  const polygonResolution = 1; // In angular degrees
   const [OrbitControls, event] = useControls();
 
   // Data / Texture import
@@ -45,7 +43,7 @@ export const Globe = ({ navigation }) => {
     require("../../assets/cloud.jpeg")
   ) as Texture;
 
-  const { countryData, setCountryData } = useContext(CountryDataContext);
+  const { countryData, setCountryData, visitedCount, setVisitedCount } = useContext(CountryDataContext);
   // Check why setCountryData dose not cause render when being called
   const [_, setRender] = useState(false); // Force re-render, needed because setCountryData rerender is not working
 
@@ -139,18 +137,23 @@ export const Globe = ({ navigation }) => {
   );
 
   const handleCountryClick = (index: number) => {
+    const key = countriesJson.features[index].properties.adm0_a3;
+
+    const prevValue = countryData.get(key);
+    const newCountryData = new Map<string, ICountryData>(countryData);
+
+    console.log(visitedCount, countryData.size);
+    
+    !countryData.get(key).visited ? setVisitedCount(visitedCount + 1) : setVisitedCount(visitedCount - 1);
+
     setCountryData(
-      countryData.set(countriesJson.features[index].properties.adm0_a3, {
-        visited: !countryData.get(
-          countriesJson.features[index].properties.adm0_a3
-        ).visited,
-        visitedDate: countryData.get(
-          countriesJson.features[index].properties.adm0_a3
-        ).visited
-          ? null
-          : Date.now(),
+      newCountryData.set(key, {
+        ...prevValue,
+        visited: !countryData.get(key).visited,
+        visitedDate: countryData.get(key).visited ? null : Date.now(),
       })
     );
+
     setRender((prev) => !prev);
 
     console.log(
@@ -160,17 +163,9 @@ export const Globe = ({ navigation }) => {
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        borderColor: "red",
-        borderWidth: 1,
-      }}
-      {...event}>
-      <Text>{Platform.OS}</Text>
+    <View style={styles.globeView} {...event}>
       <Canvas
+        style={styles.globeCanvas}
         shadows
         frameloop="demand"
         gl={{ preserveDrawingBuffer: true }}
@@ -189,14 +184,15 @@ export const Globe = ({ navigation }) => {
             rotateSpeed={1.5}
           />
           <mesh name="lighting">
-            {/* <hemisphereLight intensity={10} /> */}
-            <directionalLight
+            <hemisphereLight intensity={10} />
+            {/* <directionalLight
               color={"#ffffff"}
               intensity={10}
               position={[-2, -0.5, 1]}
-            />
+            /> */}
           </mesh>
 
+          {/*           
           <mesh
             name="atmosphere"
             visible
@@ -204,7 +200,7 @@ export const Globe = ({ navigation }) => {
             rotation={[0, 0, 0]}>
             <sphereGeometry args={[4.2, 64, 64]} />
             <meshStandardMaterial color={"#349eeb"} opacity={0.3} transparent />
-          </mesh>
+          </mesh> */}
 
           {/* <mesh name="clouds" visible position={[0, 0, 0]} rotation={[0, 0, 0]}>
             <sphereGeometry args={[4.5, 64, 64]} />
@@ -212,21 +208,31 @@ export const Globe = ({ navigation }) => {
           </mesh> */}
 
           <mesh
+            name="colored-globe"
+            visible
+            position={[0, 0, 0]}
+            rotation={[0, 0, 0]}>
+            <sphereGeometry args={[4, 64, 64]} />
+            <meshStandardMaterial color={"#063b81"} opacity={1} />
+          </mesh>
+
+          {/* <mesh
             name="earth-day"
             visible
             position={[0, 0, 0]}
             rotation={[0, 0, 0]}>
             <sphereGeometry args={[4, 64, 64]} />
             <meshStandardMaterial map={earthTexture} opacity={1} />
-          </mesh>
-          <mesh name="earth-night">
+          </mesh> */}
+
+          {/* <mesh name="earth-night">
             <sphereGeometry args={[4, 64, 64]} />
             <meshBasicMaterial
               map={earthNightTexture}
               color={"#ffffff"}
               blending={AdditiveBlending}
             />
-          </mesh>
+          </mesh> */}
 
           {polygonCountries.map((country, countryIndex) => (
             <mesh
@@ -287,7 +293,18 @@ export const Globe = ({ navigation }) => {
           <Preload all />
         </Suspense>
       </Canvas>
-      <Button title="Go to List" onPress={() => navigation.navigate("List")} />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  globeView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+  },
+  globeCanvas: {
+    width: "100%",
+  },
+});

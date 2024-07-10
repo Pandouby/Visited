@@ -16,6 +16,7 @@ import { FeatureCollection } from "geojson";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Globe } from "./src/components/Globe";
 import { CountryList } from "./src/components/CountryList";
+import { Settings } from "./src/components/Settings";
 import { NavigationContainer, TabRouter } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -29,6 +30,8 @@ export default function App() {
   const [countryData, setCountryData] = useState<Map<string, ICountryData>>(
     new Map()
   );
+
+  const [visitedCount, setVisitedCount] = useState<number>(0);
 
   const loadLocalData = async () => {
     const localCountryData = await AsyncStorage.getItem("countryData");
@@ -72,68 +75,62 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    console.log("stuff", countryData);
-  });
-
-  useEffect(() => {
     const saveLocalData = async () => {
-      console.log("saving data", countryData);
+      console.log("saving data");
 
       await AsyncStorage.setItem("countryData", JSON.stringify(countryData));
-
-      console.log(await AsyncStorage.getItem("countryData"));
-      console.log(await AsyncStorage.getAllKeys());
     };
 
     saveLocalData();
   }, [countryData]);
 
-  const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
 
   return (
     <NavigationContainer>
-      <CountryDataContext.Provider value={{ countryData, setCountryData }}>
+      <CountryDataContext.Provider value={{ countryData, setCountryData, visitedCount, setVisitedCount}}>
         <SafeAreaView
           style={{
             flex: 1,
-            backgroundColor: "white",
             paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+            backgroundColor: "#ffffff",
+            borderRadius: 30,
           }}>
-            <Tab.Navigator
-              initialRouteName="Globe"
-              screenOptions={{ tabBarShowLabel: false }}>
-              <Tab.Screen
-                name="Globe"
-                component={Globe}
-                options={{
-                  headerShown: false,
-                  tabBarIcon: ({ color }) => (
-                    <Entypo name="globe" size={24} color={color} />
-                  ),
-                }}
-              />
-              <Tab.Screen
-                name="List"
-                component={CountryList}
-                options={{
-                  headerShown: false,
-                  tabBarIcon: ({ color }) => (
-                    <Entypo name="list" size={24} color={color} />
-                  ),
-                }}
-              />
-              <Tab.Screen
-                name="Settings"
-                component={CountryList}
-                options={{
-                  headerShown: false,
-                  tabBarIcon: ({ color }) => (
-                    <Ionicons name="settings-outline" size={24} color={color} />
-                  ),
-                }}
-              />
-            </Tab.Navigator>
+          <Tab.Navigator
+            initialRouteName="List"
+            screenOptions={{ tabBarShowLabel: false }}
+            tabBar={(props) => <Tabbar {...props} />}>
+            <Tab.Screen
+              name="List"
+              component={CountryList}
+              options={{
+                headerShown: false,
+                tabBarIcon: ({ color, focused }) => (
+                  <Entypo name="list" size={24} color={color} />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="Globe"
+              component={Globe}
+              options={{
+                headerShown: false,
+                tabBarIcon: ({ color, focused }) => (
+                  <Entypo name="globe" size={28} color={color} />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="Settings"
+              component={Settings}
+              options={{
+                headerShown: false,
+                tabBarIcon: ({ color, focused }) => (
+                  <Ionicons name="settings-outline" size={24} color={color} />
+                ),
+              }}
+            />
+          </Tab.Navigator>
         </SafeAreaView>
       </CountryDataContext.Provider>
     </NavigationContainer>

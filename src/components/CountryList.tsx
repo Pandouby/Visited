@@ -1,37 +1,53 @@
-import { useContext } from "react";
-import { Button, Platform, Text, View } from "react-native";
+import { useContext, useEffect, useState } from "react";
+import { Button, Platform, ScrollView, Text, View } from "react-native";
 import { CountryDataContext } from "../contexts/countryDataContext";
 import { CountryListItem } from "./CountryListItem";
+import { ICountryData } from "../interfaces/countryData";
+import { Statusbar } from "./Statusbar";
 
 export const CountryList = ({ navigation }) => {
-  const { countryData, setCountryData } = useContext(CountryDataContext);
+  const { countryData, setCountryData, visitedCount, setVisitedCount } = useContext(CountryDataContext);
 
   console.log(countryData);
 
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        borderColor: "red",
-        borderWidth: 1,
-      }}>
-      <Text>Country List</Text>
-      <Text>{Platform.OS}</Text>
-      <Button
-        title="Go to Globe"
-        onPress={() => navigation.navigate("Globe")}
-      />
+  const handleChange = (visited, key) => {
+    console.log("test");
+    console.log(key);
+    console.log(visited);
 
-      {Array.from(countryData.entries()).map(([key, value]) => (
-        <CountryListItem
-          key={key}
-          countryName={value.countryName}
-          visited={value.visited}
-          svgPath={`../../assets/flags/${value.iso_a2}.svg`}
-        />
-      ))}
-    </View>
+    visited ? setVisitedCount(visitedCount + 1) : setVisitedCount(visitedCount - 1);
+
+    const prevValue = countryData.get(key);
+    const newCountryData = new Map<string, ICountryData>(countryData);
+
+    setCountryData(
+      newCountryData.set(key, {
+        ...prevValue,
+        visited,
+        visitedDate: countryData.get(key).visited ? null : Date.now(),
+      })
+    );
+  };
+
+  return (
+    <>
+      <Statusbar percentage={(visitedCount/countryData.size) * 100} />
+
+      <ScrollView
+        style={{
+          flex: 1,
+          backgroundColor: "#ffffff",
+        }}>
+        {Array.from(countryData.entries()).map(([key, value]) => (
+          <CountryListItem
+            key={key}
+            countryName={value.countryName}
+            visited={value.visited}
+            svgPath={`../../assets/flags/${value.iso_a2}.svg`}
+            onChange={(value) => handleChange(value, key)}
+          />
+        ))}
+      </ScrollView>
+    </>
   );
 };
