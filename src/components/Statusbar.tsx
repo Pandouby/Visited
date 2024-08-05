@@ -13,8 +13,8 @@ export const Statusbar = ({ percentage }) => {
             backgroundColor: Constant.ACCENT_COLOR,
             height: 15,
             zIndex: 2,
-            borderRadius: 100
-          }}></View>
+            borderRadius: 100000
+          }} ></View>
         <View style={styles.statusbarBackground}></View>
         <Text style={styles.percentage}>{Math.round(percentage * 100) / 100}%</Text>
       </View>
@@ -25,8 +25,9 @@ export const Statusbar = ({ percentage }) => {
 const styles = StyleSheet.create({
   statusbarContainer: {
     width: "100%",
-    height: 50,
-    padding: 10,
+    height: 30,
+    paddingLeft: 15,
+    paddingRight: 15,
     backgroundColor: Constant.PRIMARY_COLOR,
     display: "flex",
     flexDirection: "row",
@@ -37,26 +38,26 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 15,
     display: "flex",
-    marginLeft: 2,
     userSelect: "none",
   },
   statusbarBackground: {
     position: "absolute",
     width: "100%",
     height: "100%",
-    borderRadius: 100,
+    borderRadius: 10,
     backgroundColor: Constant.TINT_COLOR,
     zIndex: 1,
   },
   percentage: {
-    color: Constant.PRIMARY_COLOR,
+    color: Constant.STATUSBAR_TEXT_COLOR,
     position: "absolute",
     width: "100%",
 	display: "flex",
 	textAlign: "center",
 	justifyContent: "center",
 	alignItems: "center",
-	zIndex: 50,
-	fontWeight: 700,
+    textAlignVertical: "center",
+	zIndex: 100,
+	//fontWeight: 700, // Not supported by android
   }
 });

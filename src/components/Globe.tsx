@@ -18,11 +18,12 @@ import { CountryDataContext } from "../contexts/countryDataContext";
 import countriesJsonData from "../data/low-low-res.geo.json";
 import { ICountryData } from "../interfaces/countryData";
 import { FeatureCollection } from "../interfaces/geoJson";
+import { Constant } from "./Constants";
 
 export const Globe = ({ navigation }) => {
   // Constants for globe calculation
   const globeRadius = 4;
-  const polygonResolution = 1; // In angular degrees
+  const polygonResolution = 4; // In angular degrees
   const [OrbitControls, event] = useControls();
 
   // Data / Texture import
@@ -101,6 +102,7 @@ export const Globe = ({ navigation }) => {
 
   console.log(cleanCountryJson);
   */
+  const test = new Array();
 
   // Check how to save data of countries on device after loading once to reduce loading times
   const polygonCountries = useMemo(
@@ -138,6 +140,7 @@ export const Globe = ({ navigation }) => {
 
   const handleCountryClick = (index: number) => {
     const key = countriesJson.features[index].properties.adm0_a3;
+    console.log(test.length);
 
     const prevValue = countryData.get(key);
     const newCountryData = new Map<string, ICountryData>(countryData);
@@ -162,6 +165,11 @@ export const Globe = ({ navigation }) => {
     );
   };
 
+  console.log("first country", polygonCountries[83][0]
+  );
+  console.log("country count", polygonCountries.length)
+  
+
   return (
     <View style={styles.globeView} {...event}>
       <Canvas
@@ -178,8 +186,8 @@ export const Globe = ({ navigation }) => {
         <Suspense fallback={null}>
           <OrbitControls
             enablePan={false}
-            maxZoom={15}
-            minZoom={4}
+            maxZoom={20}
+            minZoom={5}
             zoomSpeed={1.2}
             rotateSpeed={1.5}
           />
@@ -241,11 +249,14 @@ export const Globe = ({ navigation }) => {
               {country.map((polygon) => {
                 // Fix reloading of all the compinents when clicking a country
                 // console.log("contour", polygon.contour);
+      
+                test.push(countryIndex);
 
                 return (
                   <>
                     <mesh
                       name="country-polygon"
+                      key={polygon.bufferGeometry.uuid}
                       geometry={polygon.bufferGeometry}>
                       <meshBasicMaterial
                         color={
@@ -257,7 +268,7 @@ export const Globe = ({ navigation }) => {
                                 countriesJson.features[countryIndex].properties
                                   .continent
                               )
-                            : "gray"
+                            : "#dedede"
                         }
                         opacity={0.4}
                       />
@@ -267,7 +278,7 @@ export const Globe = ({ navigation }) => {
                         points={
                           convertCartesianPointArray(
                             polygon.contour,
-                            globeRadius + 0.02
+                            globeRadius + 0.015
                           )[0]
                         }
                         color={
@@ -279,7 +290,7 @@ export const Globe = ({ navigation }) => {
                                 countriesJson.features[countryIndex].properties
                                   .continent
                               )
-                            : "#6d6d6d"
+                            : "#a4a4a4"
                         }
                         lineWidth={1}
                       />
@@ -302,7 +313,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#ffffff",
+    backgroundColor: Constant.BACKGROUND_COLOR,
   },
   globeCanvas: {
     width: "100%",

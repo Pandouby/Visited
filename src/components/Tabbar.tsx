@@ -36,7 +36,7 @@ export const Tabbar = ({ state, descriptors, navigation }) => {
         };
 
         return (
-          <Pressable id={label} onPress={onPress} style={styles.tab}>
+          <Pressable id={label} key={label} onPress={onPress} style={styles.tab}>
             {options.tabBarIcon}
           </Pressable>
         );
@@ -47,10 +47,12 @@ export const Tabbar = ({ state, descriptors, navigation }) => {
 
 const styles = StyleSheet.create({
   tabbar: {
+    position: "absolute",
+    bottom: 0,
     height: 50,
     padding: 5,
-    borderTopRightRadius: 30,
-    borderTopLeftRadius: 30,
+    borderTopRightRadius: 15,
+    borderTopLeftRadius: 15,
     width: "100%",
     display: "flex",
     flexDirection: "row",
@@ -59,6 +61,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     backgroundColor: Constant.ACCENT_COLOR,
   },
+
   tab: {
     flex: 1,
     height: 50,

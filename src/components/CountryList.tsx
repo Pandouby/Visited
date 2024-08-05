@@ -4,18 +4,20 @@ import { CountryDataContext } from "../contexts/countryDataContext";
 import { CountryListItem } from "./CountryListItem";
 import { ICountryData } from "../interfaces/countryData";
 import { Statusbar } from "./Statusbar";
+import { Constant } from "./Constants";
 
 export const CountryList = ({ navigation }) => {
-  const { countryData, setCountryData, visitedCount, setVisitedCount } = useContext(CountryDataContext);
+  const { countryData, setCountryData, visitedCount, setVisitedCount } =
+    useContext(CountryDataContext);
 
   console.log(countryData);
 
   const handleChange = (visited, key) => {
     console.log("test");
-    console.log(key);
-    console.log(visited);
 
-    visited ? setVisitedCount(visitedCount + 1) : setVisitedCount(visitedCount - 1);
+    visited
+      ? setVisitedCount(visitedCount + 1)
+      : setVisitedCount(visitedCount - 1);
 
     const prevValue = countryData.get(key);
     const newCountryData = new Map<string, ICountryData>(countryData);
@@ -31,11 +33,20 @@ export const CountryList = ({ navigation }) => {
 
   return (
     <>
-      <Statusbar percentage={(visitedCount/countryData.size) * 100} />
+      {countryData && (
+        <Statusbar percentage={(visitedCount / countryData.size) * 100} />
+      )}
 
       <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentInset={{ bottom: 70, top: 10 }}
+        automaticallyAdjustContentInsets={false}
+        contentContainerStyle={{
+          gap: 15,
+          paddingLeft: 15,
+          paddingRight: 15,
+        }}
         style={{
-          flex: 1,
           backgroundColor: "#ffffff",
         }}>
         {Array.from(countryData.entries()).map(([key, value]) => (

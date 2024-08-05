@@ -6,8 +6,10 @@ import {
   Platform,
   SafeAreaView,
   StatusBar,
+  StatusBarStyle,
   Text,
   View,
+  Appearance,
 } from "react-native";
 import { CountryDataContext } from "./src/contexts/countryDataContext";
 import { ICountryData } from "./src/interfaces/countryData";
@@ -24,6 +26,7 @@ import { Tabbar } from "./src/components/Tabbar";
 import { FaGlobeEurope } from "react-icons/fa";
 import { Ionicons } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
+import { Constant } from "./src/components/Constants";
 
 export default function App() {
   const countriesJson = countriesJsonData as FeatureCollection;
@@ -72,6 +75,8 @@ export default function App() {
 
   useEffect(() => {
     loadLocalData();
+
+    Appearance.setColorScheme("dark");
   }, []);
 
   useEffect(() => {
@@ -88,14 +93,15 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <CountryDataContext.Provider value={{ countryData, setCountryData, visitedCount, setVisitedCount}}>
+      <CountryDataContext.Provider
+        value={{ countryData, setCountryData, visitedCount, setVisitedCount }}>
         <SafeAreaView
           style={{
             flex: 1,
             paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-            backgroundColor: "#ffffff",
-            borderRadius: 30,
+            backgroundColor: Constant.PRIMARY_COLOR,
           }}>
+          <StatusBar barStyle="dark-content" translucent={true} />
           <Tab.Navigator
             initialRouteName="List"
             screenOptions={{ tabBarShowLabel: false }}
@@ -106,7 +112,11 @@ export default function App() {
               options={{
                 headerShown: false,
                 tabBarIcon: ({ color, focused }) => (
-                  <Entypo name="list" size={24} color={color} />
+                  <Entypo
+                    name="list"
+                    size={30}
+                    color={Constant.TAB_ICON_COLOR}
+                  />
                 ),
               }}
             />
@@ -116,7 +126,11 @@ export default function App() {
               options={{
                 headerShown: false,
                 tabBarIcon: ({ color, focused }) => (
-                  <Entypo name="globe" size={28} color={color} />
+                  <Entypo
+                    name="globe"
+                    size={30}
+                    color={Constant.TAB_ICON_COLOR}
+                  />
                 ),
               }}
             />
@@ -126,12 +140,22 @@ export default function App() {
               options={{
                 headerShown: false,
                 tabBarIcon: ({ color, focused }) => (
-                  <Ionicons name="settings-outline" size={24} color={color} />
+                  <Ionicons
+                    name="settings-outline"
+                    size={30}
+                    color={Constant.TAB_ICON_COLOR}
+                  />
                 ),
               }}
             />
           </Tab.Navigator>
         </SafeAreaView>
+        <View
+          style={{
+            backgroundColor: Constant.ACCENT_COLOR,
+            height: 35,
+            width: "100%",
+          }}></View>
       </CountryDataContext.Provider>
     </NavigationContainer>
   );
