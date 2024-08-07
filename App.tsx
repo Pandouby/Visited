@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { CountryDataContext } from "./src/contexts/countryDataContext";
 import { ICountryData } from "./src/interfaces/countryData";
-import countriesJsonData from "./src/data/low-low-res.geo.json";
+import countriesJsonData from "./src/data/low-res.geo.json";
 import { FeatureCollection } from "geojson";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Globe } from "./src/components/Globe";
@@ -37,7 +37,7 @@ export default function App() {
   const [visitedCount, setVisitedCount] = useState<number>(0);
 
   const loadLocalData = async () => {
-    const localCountryData = await AsyncStorage.getItem("countryData");
+    const localCountryData = await AsyncStorage.getItem('countryData');
     console.log("logMap", localCountryData);
 
     if (localCountryData === "{}") {
@@ -54,7 +54,7 @@ export default function App() {
         });
       });
 
-      await AsyncStorage.setItem("countryData", JSON.stringify(countryData));
+      await AsyncStorage.setItem('countryData', JSON.stringify(countryData));
 
       setCountryData(countryDataMap);
     } else {
@@ -63,7 +63,7 @@ export default function App() {
         console.log("befor save", countryData);
 
         await AsyncStorage.mergeItem(
-          "countryData",
+          'countryData',
           JSON.stringify(countryData)
         );
       };
@@ -76,7 +76,7 @@ export default function App() {
   useEffect(() => {
     loadLocalData();
 
-    Appearance.setColorScheme("dark");
+    // Appearance.setColorScheme("dark");
   }, []);
 
   useEffect(() => {

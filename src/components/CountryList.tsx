@@ -5,6 +5,8 @@ import { CountryListItem } from "./CountryListItem";
 import { ICountryData } from "../interfaces/countryData";
 import { Statusbar } from "./Statusbar";
 import { Constant } from "./Constants";
+import { SearchBar } from "react-native-screens";
+import { Searchbar } from "./Searchbar";
 
 export const CountryList = ({ navigation }) => {
   const { countryData, setCountryData, visitedCount, setVisitedCount } =
@@ -37,6 +39,8 @@ export const CountryList = ({ navigation }) => {
         <Statusbar percentage={(visitedCount / countryData.size) * 100} />
       )}
 
+      <Searchbar />
+      
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentInset={{ bottom: 70, top: 10 }}
@@ -54,11 +58,19 @@ export const CountryList = ({ navigation }) => {
             key={key}
             countryName={value.countryName}
             visited={value.visited}
-            svgPath={`../../assets/flags/${value.iso_a2}.svg`}
+            countryFlagIcon={getCountryFlagEmoji(value.iso_a2)}
             onChange={(value) => handleChange(value, key)}
           />
         ))}
       </ScrollView>
     </>
   );
+};
+
+export const getCountryFlagEmoji = (countryCode: string) => {
+  const codePoints = countryCode
+    .toUpperCase()
+    .split("")
+    .map((char) => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
 };

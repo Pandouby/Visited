@@ -2,11 +2,9 @@ import { Image, Pressable, Text, View } from "react-native";
 import Checkbox from "expo-checkbox";
 import { StyleSheet } from "react-native";
 import { Constant } from "./Constants";
-import { useState } from "react";
-import SVG from '../../assets/flags/ad.svg';
 
 export const CountryListItem = ({
-  svgPath,
+  countryFlagIcon,
   countryName,
   visited,
   onChange,
@@ -14,7 +12,7 @@ export const CountryListItem = ({
   return (
     <View style={[styles.countryListItem, styles.shadowProp]}>
       <Pressable onPress={() => onChange(!visited)} style={styles.pressable}>
-        <Image source={SVG} style={styles.flagImage} />
+        <Text style={styles.flagIcon}>{countryFlagIcon}</Text>
         <Text>{countryName}</Text>
         <Checkbox onValueChange={(value) => onChange(value)} value={visited} />
       </Pressable>
@@ -34,11 +32,13 @@ const styles = StyleSheet.create({
     // shadow not working
     shadowColor: "#000000",
     shadowRadius: 100,
+    textAlign: "center",
   },
 
-  flagImage: {
-    width: 20,
-    height: 20,
+  flagIcon: {
+    fontSize: 20,
+    textAlign: "center",
+    textAlignVertical: "center"
   },
 
   pressable: {

@@ -15,7 +15,7 @@ import {
   convertCartesianPointArray,
 } from "../calculations/GenerateCountryPolygon";
 import { CountryDataContext } from "../contexts/countryDataContext";
-import countriesJsonData from "../data/low-low-res.geo.json";
+import countriesJsonData from "../data/low-res.geo.json";
 import { ICountryData } from "../interfaces/countryData";
 import { FeatureCollection } from "../interfaces/geoJson";
 import { Constant } from "./Constants";
@@ -165,9 +165,10 @@ export const Globe = ({ navigation }) => {
     );
   };
 
-  console.log("first country", polygonCountries[83][0]
-  );
   console.log("country count", polygonCountries.length)
+
+  console.log("japan", polygonCountries[83][0]);
+  
   
 
   return (
