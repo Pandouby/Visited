@@ -13,7 +13,7 @@ export const CountryListItem = ({
     <View style={[styles.countryListItem, styles.shadowProp]}>
       <Pressable onPress={() => onChange(!visited)} style={styles.pressable}>
         <Text style={styles.flagIcon}>{countryFlagIcon}</Text>
-        <Text>{countryName}</Text>
+        <Text style={styles.countryName}>{countryName}</Text>
         <Checkbox onValueChange={(value) => onChange(value)} value={visited} />
       </Pressable>
     </View>
@@ -29,16 +29,10 @@ const styles = StyleSheet.create({
     gap: 5,
     backgroundColor: Constant.TINT_COLOR,
     borderRadius: 10,
-    // shadow not working
-    shadowColor: "#000000",
-    shadowRadius: 100,
-    textAlign: "center",
   },
 
   flagIcon: {
     fontSize: 20,
-    textAlign: "center",
-    textAlignVertical: "center"
   },
 
   pressable: {
@@ -48,13 +42,15 @@ const styles = StyleSheet.create({
     paddingRight: 15,
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     width: "100%",
     height: "100%",
   },
   shadowProp: {
-    shadowColor: '#171717',
-    shadowOffset: {width: -2, height: 4},
+    shadowColor: "#171717",
+    shadowOffset: { width: -2, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
   },
+  countryName: { textAlign: "center", textAlignVertical: "center" },
 });

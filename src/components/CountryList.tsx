@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Button, Platform, ScrollView, Text, View } from "react-native";
 import { CountryDataContext } from "../contexts/countryDataContext";
 import { CountryListItem } from "./CountryListItem";
@@ -7,6 +7,7 @@ import { Statusbar } from "./Statusbar";
 import { Constant } from "./Constants";
 import { SearchBar } from "react-native-screens";
 import { Searchbar } from "./Searchbar";
+import Fuse from "fuse.js";
 
 export const CountryList = ({ navigation }) => {
   const { countryData, setCountryData, visitedCount, setVisitedCount } =
@@ -33,14 +34,31 @@ export const CountryList = ({ navigation }) => {
     );
   };
 
+  const searchResultList = new Map<string, ICountryData>();
+
+  const handleSearchList = useCallback((searchParam) => {
+    // searchResultList.clear();
+
+    Array.from(countryData.entries()).map(([key, value]) => {
+      if (value.countryName.includes("Maldives")) {
+        searchResultList.set(key, value);
+      }
+    });
+
+    console.log("List", searchResultList);
+  }, []);
+
   return (
     <>
-      {countryData && (
-        <Statusbar percentage={(visitedCount / countryData.size) * 100} />
-      )}
+      {
+        // Status bar displays NAN for a moment when loading reason unknown propably because of countryDate not being loeaded yet
+        countryData && (
+          <Statusbar percentage={(visitedCount / countryData.size) * 100} />
+        )
+      }
 
-      <Searchbar />
-      
+      <Searchbar onSearchList={handleSearchList} />
+
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentInset={{ bottom: 70, top: 10 }}
