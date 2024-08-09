@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { Constant } from "./Constants";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 export const PopupModal = ({ visible, onClose, children }) => {
   return (
@@ -31,14 +32,15 @@ export const PopupModal = ({ visible, onClose, children }) => {
         <View style={styles.centeredView}>
           <TouchableWithoutFeedback>
             <View style={styles.filterModal}>
-              <View style={styles.closeButton}>
-                <Button
-                  title="X"
-                  onPress={() => {
-                    onClose();
-                  }}
-                />
-              </View>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => {
+                  onClose();
+                }}>
+                <View>
+                <AntDesign name="close" size={24} color={Constant.ACCENT_COLOR} />
+                </View>
+              </TouchableOpacity>
               {children}
             </View>
           </TouchableWithoutFeedback>
@@ -78,6 +80,6 @@ const styles = StyleSheet.create({
     margin: 5,
     top: 5,
     right: 5,
-    position: "absolute"
+    position: "absolute",
   },
 });
