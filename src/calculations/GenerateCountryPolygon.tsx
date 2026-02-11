@@ -1,7 +1,7 @@
 import { BufferGeometry, Float32BufferAttribute } from "three";
 
 import { merge as flatten } from "d3-array";
-import earcut from "earcut";
+import * as earcut from "earcut";
 import geoPolygonTriangulate from "./GeneratePolygonPoints";
 
 export const GenerateCountryPolygon = (
