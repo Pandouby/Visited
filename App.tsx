@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { CountryDataContext } from "./src/contexts/countryDataContext";
 import { ICountryData } from "./src/interfaces/countryData";
-import countriesJsonData from "./src/data/low-res.geo.json";
+import countriesJsonData from "./src/data/low-low-res.geo.json";
 import { FeatureCollection } from "geojson";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Globe } from "./src/components/Globe";

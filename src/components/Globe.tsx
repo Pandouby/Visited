@@ -15,7 +15,7 @@ import {
   convertCartesianPointArray,
 } from "../calculations/GenerateCountryPolygon";
 import { CountryDataContext } from "../contexts/countryDataContext";
-import countriesJsonData from "../data/low-res.geo.json";
+import countriesJsonData from "../data/low-low-res.geo.json";
 import { ICountryData } from "../interfaces/countryData";
 import { FeatureCollection } from "../interfaces/geoJson";
 import { Constant } from "./Constants";
